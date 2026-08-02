@@ -1,0 +1,22 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pytest ruff
+      # Der Regelkern laeuft ohne Home Assistant - das ist Absicht und wird
+      # von test_no_ha_imports.py bewacht.
+      - run: python -m pytest tests/ -q
+      - run: python -m ruff check .
+      - run: python -m ruff format --check .

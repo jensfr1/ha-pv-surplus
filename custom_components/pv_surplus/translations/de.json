@@ -1,0 +1,167 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Was wird gemessen?",
+        "description": "Wähle den Sensor, der die Netzleistung meldet. Wichtig ist das Vorzeichen: Einspeisung muss negativ sein. Steht bei dir das Gegenteil, setze den Haken.",
+        "data": {
+          "name": "Name",
+          "grid_power": "Netzleistung",
+          "grid_invert": "Vorzeichen umdrehen"
+        },
+        "data_description": {
+          "grid_power": "Der Zähler am Netzanschluss, nicht der Wechselrichter.",
+          "grid_invert": "Nur ankreuzen, wenn dein Sensor Einspeisung positiv meldet."
+        }
+      },
+      "wallbox": {
+        "title": "Womit wird gestellt?",
+        "description": "Die Entität, mit der du den Ladestrom deiner Wallbox einstellst. Alles, was in Home Assistant als Regler auftaucht, funktioniert – unabhängig vom Hersteller.",
+        "data": {
+          "current_entity": "Ladestrom",
+          "switch_entity": "Ladefreigabe",
+          "ev_power": "Ladeleistung"
+        },
+        "data_description": {
+          "switch_entity": "Optional. Ohne sie wird nur über den Ladestrom geregelt.",
+          "ev_power": "Dringend empfohlen: Ohne diesen Wert kann nicht erkannt werden, ob überhaupt geladen wird."
+        }
+      },
+      "confirm": {
+        "title": "Passt das so?",
+        "description": "Netzleistung gerade: {netz}\nLadestrom-Bereich: {strom}\nLadeleistung: {ev}\n\nZeigt die Netzleistung in die falsche Richtung, geh einen Schritt zurück und dreh das Vorzeichen um."
+      }
+    },
+    "error": {
+      "cannot_read_source": "Diese Entität liefert gerade keinen brauchbaren Wert.",
+      "not_a_current_control": "Diese Entität kann keine 6 A – das ist vermutlich nicht die Ladestromvorgabe."
+    },
+    "abort": {
+      "already_configured": "Für diese Wallbox gibt es die Regelung schon."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Einstellungen",
+        "menu_options": {
+          "quellen": "Messwerte",
+          "wallbox": "Wallbox",
+          "phasen": "Phasenumschaltung",
+          "fahrzeug": "Fahrzeug",
+          "experten": "Fortgeschritten"
+        }
+      },
+      "quellen": {
+        "title": "Weitere Messwerte",
+        "description": "Solarleistung und Hausbatterie werden für den Tast-Betrieb gebraucht. Ohne sie regelt die Integration nur nach der Einspeisung.",
+        "data": {
+          "pv_power": "Solarleistung",
+          "battery_power": "Batterieleistung",
+          "battery_invert": "Vorzeichen der Batterie umdrehen",
+          "battery_soc": "Ladestand der Hausbatterie"
+        },
+        "data_description": {
+          "battery_power": "Laden muss positiv sein, Entladen negativ."
+        }
+      },
+      "wallbox": {
+        "title": "Wallbox",
+        "data": {
+          "ev_power": "Ladeleistung",
+          "surplus_includes_ev": "Wallbox hängt hinter dem Netzzähler",
+          "respect_manual": "Änderungen von Hand respektieren"
+        },
+        "data_description": {
+          "surplus_includes_ev": "Nur ankreuzen, wenn das Laden die gemessene Einspeisung senkt. Falsch gesetzt schaukelt sich die Regelung auf.",
+          "respect_manual": "Stellt jemand den Ladestrom selbst, ruht die Regelung zehn Minuten."
+        }
+      },
+      "phasen": {
+        "title": "Phasenumschaltung",
+        "description": "Dreiphasig sind 6 A schon 4,1 kW – an schwachen Tagen lädt eine dreiphasige Wallbox deshalb gar nicht. Kann sie umschalten, wähle hier die passende Entität. Der Schalter dazu ist standardmäßig aus.",
+        "data": {
+          "phase_entity": "Umschaltung",
+          "phase_currents": "Ströme je Phase",
+          "phase_option_1p": "Bedeutet einphasig",
+          "phase_option_3p": "Bedeutet dreiphasig"
+        },
+        "data_description": {
+          "phase_currents": "Damit wird erkannt, wie viele Phasen das Auto wirklich nutzt."
+        }
+      },
+      "fahrzeug": {
+        "title": "Fahrzeug",
+        "description": "Nur für den Modus „Min+PV“: Ist das Auto fast leer, wird notfalls aus dem Netz nachgeladen.",
+        "data": {
+          "vehicle_soc": "Ladestand",
+          "vehicle_target_soc": "Ziel-Ladestand"
+        }
+      },
+      "experten": {
+        "title": "Fortgeschritten",
+        "data": {
+          "voltage": "Spannung je Phase (V)",
+          "stale_action": "Wenn der Zähler ausfällt"
+        }
+      }
+    }
+  },
+  "selector": {
+    "stale_action": {
+      "options": {
+        "pause": "Ladung pausieren",
+        "hold": "Letztes Limit halten",
+        "min_current": "Auf Mindeststrom gehen"
+      }
+    }
+  },
+  "entity": {
+    "select": {
+      "mode": {
+        "name": "Betriebsart",
+        "state": {
+          "off": "Aus",
+          "pv": "Nur Solarstrom",
+          "minpv": "Min + Solarstrom",
+          "manual": "Manuell",
+          "max": "Maximum"
+        }
+      }
+    },
+    "number": {
+      "min_current": { "name": "Mindestladestrom" },
+      "max_current": { "name": "Höchster Ladestrom" },
+      "manual_current": { "name": "Manueller Ladestrom" },
+      "surplus_reserve": { "name": "Reserve fürs Haus" },
+      "min_soc": { "name": "Mindestladestand Fahrzeug" },
+      "battery_reserve_soc": { "name": "Reserve Hausbatterie" }
+    },
+    "switch": {
+      "pv_probe": { "name": "Tast-Betrieb" },
+      "phase_switching": { "name": "Phasenumschaltung erlauben" }
+    },
+    "sensor": {
+      "surplus": { "name": "Überschuss" },
+      "target_current": { "name": "Sollstrom" },
+      "phases": { "name": "Phasen" },
+      "status": {
+        "name": "Status",
+        "state": {
+          "off": "Aus",
+          "idle": "Wartet",
+          "charging": "Lädt",
+          "paused": "Pausiert",
+          "probing": "Tastet",
+          "grid_limited": "Netzsperre aktiv",
+          "stale": "Keine Messwerte"
+        }
+      },
+      "grid_guard_cap": { "name": "Deckel der Netzsperre" },
+      "probe_ceiling": { "name": "Getastete Obergrenze" },
+      "charged_energy": { "name": "Geladen gesamt" },
+      "solar_energy": { "name": "Davon Sonne" },
+      "grid_energy": { "name": "Davon Netz" }
+    }
+  }
+}

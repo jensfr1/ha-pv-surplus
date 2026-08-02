@@ -1,0 +1,199 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "What is being measured?",
+        "description": "Pick the sensor reporting grid power. The sign matters: export must be negative. If yours is the other way round, tick the box.",
+        "data": {
+          "name": "Name",
+          "grid_power": "Grid power",
+          "grid_invert": "Invert sign"
+        },
+        "data_description": {
+          "grid_power": "The meter at the grid connection, not the inverter.",
+          "grid_invert": "Only tick this if your sensor reports export as positive."
+        }
+      },
+      "wallbox": {
+        "title": "What does the controlling?",
+        "description": "The entity you use to set your charger's current. Anything that shows up in Home Assistant as a control works, whatever the brand.",
+        "data": {
+          "current_entity": "Charging current",
+          "switch_entity": "Charging enable",
+          "ev_power": "Charging power"
+        },
+        "data_description": {
+          "switch_entity": "Optional. Without it, only the current is controlled.",
+          "ev_power": "Strongly recommended: without it there is no way to tell whether charging is happening at all."
+        }
+      },
+      "confirm": {
+        "title": "Does this look right?",
+        "description": "Grid power right now: {netz}\nCurrent range: {strom}\nCharging power: {ev}\n\nIf the grid power points the wrong way, go back and invert the sign."
+      }
+    },
+    "error": {
+      "cannot_read_source": "This entity is not returning a usable value right now.",
+      "not_a_current_control": "This entity cannot do 6 A - it is probably not the charging current control."
+    },
+    "abort": {
+      "already_configured": "This charger already has a control set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Settings",
+        "menu_options": {
+          "quellen": "Measurements",
+          "wallbox": "Charger",
+          "phasen": "Phase switching",
+          "fahrzeug": "Vehicle",
+          "experten": "Advanced"
+        }
+      },
+      "quellen": {
+        "title": "Further measurements",
+        "description": "Solar power and home battery are needed for probing. Without them the integration only follows the export value.",
+        "data": {
+          "pv_power": "Solar power",
+          "battery_power": "Battery power",
+          "battery_invert": "Invert battery sign",
+          "battery_soc": "Home battery level"
+        },
+        "data_description": {
+          "battery_power": "Charging must be positive, discharging negative."
+        }
+      },
+      "wallbox": {
+        "title": "Charger",
+        "data": {
+          "ev_power": "Charging power",
+          "surplus_includes_ev": "Charger sits behind the grid meter",
+          "respect_manual": "Respect manual changes"
+        },
+        "data_description": {
+          "surplus_includes_ev": "Only tick this if charging lowers the measured export. Set wrongly, the control feeds back on itself.",
+          "respect_manual": "If someone sets the current by hand, the control rests for ten minutes."
+        }
+      },
+      "phasen": {
+        "title": "Phase switching",
+        "description": "On three phases, 6 A is already 4.1 kW - on weak days a three-phase charger will not charge at all. If yours can switch, pick the entity here. The switch for it is off by default.",
+        "data": {
+          "phase_entity": "Switching entity",
+          "phase_currents": "Current per phase",
+          "phase_option_1p": "Means single-phase",
+          "phase_option_3p": "Means three-phase"
+        },
+        "data_description": {
+          "phase_currents": "Used to detect how many phases the car actually draws."
+        }
+      },
+      "fahrzeug": {
+        "title": "Vehicle",
+        "description": "Only for the \"Min + solar\" mode: if the car is nearly empty, it tops up from the grid.",
+        "data": {
+          "vehicle_soc": "State of charge",
+          "vehicle_target_soc": "Target state of charge"
+        }
+      },
+      "experten": {
+        "title": "Advanced",
+        "data": {
+          "voltage": "Voltage per phase (V)",
+          "stale_action": "When the meter fails"
+        }
+      }
+    }
+  },
+  "selector": {
+    "stale_action": {
+      "options": {
+        "pause": "Pause charging",
+        "hold": "Hold last limit",
+        "min_current": "Fall back to minimum current"
+      }
+    }
+  },
+  "entity": {
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "state": {
+          "off": "Off",
+          "pv": "Solar only",
+          "minpv": "Min + solar",
+          "manual": "Manual",
+          "max": "Maximum"
+        }
+      }
+    },
+    "number": {
+      "min_current": {
+        "name": "Minimum charging current"
+      },
+      "max_current": {
+        "name": "Maximum charging current"
+      },
+      "manual_current": {
+        "name": "Manual charging current"
+      },
+      "surplus_reserve": {
+        "name": "Reserve for the house"
+      },
+      "min_soc": {
+        "name": "Minimum vehicle charge"
+      },
+      "battery_reserve_soc": {
+        "name": "Home battery reserve"
+      }
+    },
+    "switch": {
+      "pv_probe": {
+        "name": "Probing"
+      },
+      "phase_switching": {
+        "name": "Allow phase switching"
+      }
+    },
+    "sensor": {
+      "surplus": {
+        "name": "Surplus"
+      },
+      "target_current": {
+        "name": "Target current"
+      },
+      "phases": {
+        "name": "Phases"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "off": "Off",
+          "idle": "Waiting",
+          "charging": "Charging",
+          "paused": "Paused",
+          "probing": "Probing",
+          "grid_limited": "Grid guard active",
+          "stale": "No measurements"
+        }
+      },
+      "grid_guard_cap": {
+        "name": "Grid guard cap"
+      },
+      "probe_ceiling": {
+        "name": "Probed ceiling"
+      },
+      "charged_energy": {
+        "name": "Charged total"
+      },
+      "solar_energy": {
+        "name": "Of which solar"
+      },
+      "grid_energy": {
+        "name": "Of which grid"
+      }
+    }
+  }
+}

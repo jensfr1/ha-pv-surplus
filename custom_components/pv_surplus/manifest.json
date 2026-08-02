@@ -1,0 +1,12 @@
+{
+  "domain": "pv_surplus",
+  "name": "PV-Überschussladen",
+  "codeowners": ["@jensfr1"],
+  "config_flow": true,
+  "documentation": "https://github.com/jensfr1/ha-pv-surplus",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/jensfr1/ha-pv-surplus/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
