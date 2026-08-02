@@ -1,0 +1,279 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  PV-Überschussladen — Dashboard
+#
+#  Einfügen: Dashboard öffnen → Stift oben rechts → Drei-Punkte-Menü →
+#            "Raw-Konfigurationseditor" → alles ersetzen → Speichern.
+#
+#  Nur Standard-Karten, keine HACS-Frontend-Erweiterungen nötig.
+#
+#  ⚠ Die Entitäts-IDs unten raten den Gerätenamen "PV-Überschussladen".
+#    Heißt dein Gerät anders, stimmen sie nicht. Prüfen:
+#    Entwicklerwerkzeuge → Zustände → nach "uberschuss" filtern.
+#    Dann hier die Präfixe per Suchen-und-Ersetzen anpassen.
+# ─────────────────────────────────────────────────────────────────────────────
+
+views:
+  - title: Laden
+    path: laden
+    icon: mdi:ev-station
+    type: sections
+    max_columns: 3
+    sections:
+
+      # ── Was gerade passiert ─────────────────────────────────────────────
+      - type: grid
+        cards:
+          - type: heading
+            heading: Jetzt
+            heading_style: title
+            icon: mdi:solar-power-variant
+
+          - type: tile
+            entity: sensor.pv_uberschussladen_status
+            name: Status
+            # Die Regelung legt ihre Begründung als Attribut bei - damit steht
+            # hier im Klartext, warum gerade nichts fließt.
+            state_content:
+              - state
+              - reason
+            vertical: false
+
+          - type: tile
+            entity: select.pv_uberschussladen_betriebsart
+            name: Betriebsart
+            icon: mdi:tune-variant
+            features:
+              - type: select-options
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.pv_uberschussladen_uberschuss
+                name: Überschuss
+                color: green
+              - type: tile
+                entity: sensor.pv_uberschussladen_sollstrom
+                name: Sollstrom
+                color: blue
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.daheimlader_ladeleistung
+                name: Lädt gerade
+                color: purple
+              - type: tile
+                entity: sensor.pv_uberschussladen_phasen
+                name: Phasen
+                icon: mdi:sine-wave
+
+      # ── Leistungsverlauf ────────────────────────────────────────────────
+      - type: grid
+        cards:
+          - type: heading
+            heading: Verlauf
+            heading_style: title
+            icon: mdi:chart-line
+
+          - type: history-graph
+            hours_to_show: 12
+            entities:
+              - entity: sensor.ocean2_solar_power
+                name: Solar
+              - entity: sensor.ocean2_grid_power
+                name: Netz
+              - entity: sensor.daheimlader_ladeleistung
+                name: Auto
+
+          # Sollstrom als eigene Kurve: Der Verlauf zeigt, wie die Regelung
+          # der Sonne folgt - und wo sie es nicht konnte.
+          - type: history-graph
+            hours_to_show: 12
+            entities:
+              - entity: sensor.pv_uberschussladen_sollstrom
+                name: Sollstrom
+              - entity: sensor.pv_uberschussladen_status
+                name: Status
+
+      # ── Steuerung ───────────────────────────────────────────────────────
+      - type: grid
+        cards:
+          - type: heading
+            heading: Einstellungen
+            heading_style: title
+            icon: mdi:cog
+
+          - type: entities
+            entities:
+              - entity: number.pv_uberschussladen_mindestladestrom
+                name: Mindeststrom
+              - entity: number.pv_uberschussladen_hochster_ladestrom
+                name: Höchster Strom
+              - entity: number.pv_uberschussladen_manueller_ladestrom
+                name: Manuell
+              - type: divider
+              - entity: number.pv_uberschussladen_reserve_furs_haus
+                name: Reserve fürs Haus
+              - entity: number.pv_uberschussladen_reserve_hausbatterie
+                name: Reserve Hausbatterie
+              - entity: number.pv_uberschussladen_mindestladestand_fahrzeug
+                name: Mindestladestand Auto
+
+          - type: entities
+            title: Schalter
+            entities:
+              - entity: switch.pv_uberschussladen_tast_betrieb
+                name: Tast-Betrieb
+                secondary_info: last-changed
+              - entity: switch.daheimlader_charging_enable
+                name: Ladefreigabe (Wallbox)
+              - entity: input_number.daheimlader_strombegrenzung
+                name: Strombegrenzung (Wallbox)
+
+      # ── Ertrag ──────────────────────────────────────────────────────────
+      - type: grid
+        cards:
+          - type: heading
+            heading: Geladen
+            heading_style: title
+            icon: mdi:counter
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.pv_uberschussladen_geladen_gesamt
+                name: Gesamt
+              - type: tile
+                entity: sensor.pv_uberschussladen_davon_sonne
+                name: Sonne
+                color: amber
+              - type: tile
+                entity: sensor.pv_uberschussladen_davon_netz
+                name: Netz
+                color: red
+
+          - type: statistic
+            entity: sensor.pv_uberschussladen_davon_sonne
+            period:
+              calendar:
+                period: month
+            stat_type: change
+            name: Sonnenstrom diesen Monat
+
+      # ── Anlage ──────────────────────────────────────────────────────────
+      - type: grid
+        cards:
+          - type: heading
+            heading: Anlage
+            heading_style: title
+            icon: mdi:home-lightning-bolt
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: sensor.ocean2_solar_power
+                name: Solar
+                color: amber
+              - type: tile
+                entity: sensor.ocean2_grid_power
+                name: Netz
+              - type: tile
+                entity: sensor.ocean2_battery_power
+                name: Batterie
+              - type: tile
+                entity: sensor.ocean2_battery
+                name: Speicher
+
+          - type: gauge
+            entity: sensor.ocean2_battery
+            name: Hausbatterie
+            min: 0
+            max: 100
+            needle: true
+            severity:
+              green: 50
+              yellow: 20
+              red: 0
+
+      # ── Diagnose ────────────────────────────────────────────────────────
+      #  Nur sichtbar, wenn tatsächlich etwas eingreift. Im Normalbetrieb
+      #  soll hier nichts stehen - sonst gewöhnt man sich an Meldungen.
+      - type: grid
+        cards:
+          - type: heading
+            heading: Eingriffe
+            heading_style: title
+            icon: mdi:shield-alert
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.pv_uberschussladen_status
+                state: grid_limited
+            card:
+              type: markdown
+              content: >
+                ### ⚠️ Netzbezugs-Sperre aktiv
+
+                Es fließt Strom aus dem Netz, während geladen wird. Die Sperre
+                hat den Ladestrom gedeckelt und gibt ihn alle zwei Minuten um
+                ein Ampere wieder frei.
+
+                Deckel:
+                {{ states('sensor.pv_uberschussladen_deckel_der_netzsperre') }} A
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.pv_uberschussladen_status
+                state: probing
+            card:
+              type: markdown
+              content: >
+                ### 🔎 Tast-Betrieb läuft
+
+                Die Anlage ist abgeregelt, die Einspeisung liegt also bei null,
+                obwohl das Dach mehr könnte. Die Regelung erhöht den Ladestrom
+                schrittweise und beobachtet, ob die Anlage mitzieht.
+
+                Gefundene Obergrenze:
+                {{ states('sensor.pv_uberschussladen_getastete_obergrenze') }} A
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.pv_uberschussladen_status
+                state: stale
+            card:
+              type: markdown
+              content: >
+                ### ❌ Keine Messwerte
+
+                Der Netzzähler liefert seit über zwei Minuten nichts mehr.
+                Ohne ihn ist Überschussladen Raten — die Ladung ist deshalb
+                ausgesetzt.
+
+          - type: entities
+            title: Werte im Detail
+            entities:
+              - entity: sensor.pv_uberschussladen_deckel_der_netzsperre
+                name: Deckel der Netzsperre
+              - entity: sensor.pv_uberschussladen_getastete_obergrenze
+                name: Getastete Obergrenze
+              - entity: sensor.daheimlader_ladestrom_limit
+                name: Limit an der Wallbox
+              - type: divider
+              - entity: sensor.daheimlader_ladestrom_l1
+                name: Strom L1
+              - entity: sensor.daheimlader_ladestrom_l2
+                name: Strom L2
+              - entity: sensor.daheimlader_ladestrom_l3
+                name: Strom L3

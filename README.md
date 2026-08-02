@@ -141,6 +141,19 @@ nachvollziehen, warum gerade 0 A anliegen.
 - **Home Assistant fällt aus.** Das zuletzt gesetzte Limit bleibt stehen. Es gibt keinen
   Not-Aus außerhalb von Home Assistant — plane danach.
 
+## Dashboard
+
+Unter [`examples/dashboard.yaml`](examples/dashboard.yaml) liegt ein fertiges
+Dashboard: aktueller Zustand, Verlauf, Regler, kWh-Zähler und ein Diagnose-Teil,
+der nur dann etwas anzeigt, wenn tatsächlich eingegriffen wird — Netzsperre
+aktiv, Tast-Betrieb läuft, Zähler ausgefallen. Ein Dashboard, das ständig
+Warnungen zeigt, wird nach einer Woche nicht mehr gelesen.
+
+Nur Standard-Karten, keine Frontend-Erweiterungen nötig. Einfügen über
+*Dashboard → Stift → Drei-Punkte-Menü → Raw-Konfigurationseditor*. Die
+Entitäts-IDs darin nehmen an, dass dein Gerät „PV-Überschussladen" heißt —
+heißt es anders, einmal Suchen und Ersetzen.
+
 ## Woher die Regelung kommt
 
 Der Regelkern ist die Portierung einer Steuerung, die seit Wochen an einer echten
