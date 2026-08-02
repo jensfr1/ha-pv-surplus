@@ -70,11 +70,14 @@
         "data": {
           "ev_power": "Ladeleistung",
           "surplus_includes_ev": "Wallbox hängt hinter dem Netzzähler",
-          "respect_manual": "Änderungen von Hand respektieren"
+          "respect_manual": "Änderungen von Hand respektieren",
+          "current_entity": "Ladestrom",
+          "switch_entity": "Ladefreigabe"
         },
         "data_description": {
           "surplus_includes_ev": "Nur ankreuzen, wenn das Laden die gemessene Einspeisung senkt. Falsch gesetzt schaukelt sich die Regelung auf.",
-          "respect_manual": "Stellt jemand den Ladestrom selbst, ruht die Regelung zehn Minuten."
+          "respect_manual": "Stellt jemand den Ladestrom selbst, ruht die Regelung zehn Minuten.",
+          "switch_entity": "Nötig, wenn die Strombegrenzung nicht auf 0 gehen kann — sonst lädt die Wallbox bei jeder Pause mit ihrem Mindeststrom weiter."
         }
       },
       "phasen": {
@@ -130,21 +133,43 @@
       }
     },
     "number": {
-      "min_current": { "name": "Mindestladestrom" },
-      "max_current": { "name": "Höchster Ladestrom" },
-      "manual_current": { "name": "Manueller Ladestrom" },
-      "surplus_reserve": { "name": "Reserve fürs Haus" },
-      "min_soc": { "name": "Mindestladestand Fahrzeug" },
-      "battery_reserve_soc": { "name": "Reserve Hausbatterie" }
+      "min_current": {
+        "name": "Mindestladestrom"
+      },
+      "max_current": {
+        "name": "Höchster Ladestrom"
+      },
+      "manual_current": {
+        "name": "Manueller Ladestrom"
+      },
+      "surplus_reserve": {
+        "name": "Reserve fürs Haus"
+      },
+      "min_soc": {
+        "name": "Mindestladestand Fahrzeug"
+      },
+      "battery_reserve_soc": {
+        "name": "Reserve Hausbatterie"
+      }
     },
     "switch": {
-      "pv_probe": { "name": "Tast-Betrieb" },
-      "phase_switching": { "name": "Phasenumschaltung erlauben" }
+      "pv_probe": {
+        "name": "Tast-Betrieb"
+      },
+      "phase_switching": {
+        "name": "Phasenumschaltung erlauben"
+      }
     },
     "sensor": {
-      "surplus": { "name": "Überschuss" },
-      "target_current": { "name": "Sollstrom" },
-      "phases": { "name": "Phasen" },
+      "surplus": {
+        "name": "Überschuss"
+      },
+      "target_current": {
+        "name": "Sollstrom"
+      },
+      "phases": {
+        "name": "Phasen"
+      },
       "status": {
         "name": "Status",
         "state": {
@@ -157,11 +182,21 @@
           "stale": "Keine Messwerte"
         }
       },
-      "grid_guard_cap": { "name": "Deckel der Netzsperre" },
-      "probe_ceiling": { "name": "Getastete Obergrenze" },
-      "charged_energy": { "name": "Geladen gesamt" },
-      "solar_energy": { "name": "Davon Sonne" },
-      "grid_energy": { "name": "Davon Netz" }
+      "grid_guard_cap": {
+        "name": "Deckel der Netzsperre"
+      },
+      "probe_ceiling": {
+        "name": "Getastete Obergrenze"
+      },
+      "charged_energy": {
+        "name": "Geladen gesamt"
+      },
+      "solar_energy": {
+        "name": "Davon Sonne"
+      },
+      "grid_energy": {
+        "name": "Davon Netz"
+      }
     }
   }
 }

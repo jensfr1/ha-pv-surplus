@@ -70,11 +70,14 @@
         "data": {
           "ev_power": "Charging power",
           "surplus_includes_ev": "Charger sits behind the grid meter",
-          "respect_manual": "Respect manual changes"
+          "respect_manual": "Respect manual changes",
+          "current_entity": "Charging current",
+          "switch_entity": "Charging enable"
         },
         "data_description": {
           "surplus_includes_ev": "Only tick this if charging lowers the measured export. Set wrongly, the control feeds back on itself.",
-          "respect_manual": "If someone sets the current by hand, the control rests for ten minutes."
+          "respect_manual": "If someone sets the current by hand, the control rests for ten minutes.",
+          "switch_entity": "Needed if the current control cannot go to 0 - otherwise the charger keeps going at its minimum current during every pause."
         }
       },
       "phasen": {

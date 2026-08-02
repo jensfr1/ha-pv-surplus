@@ -222,6 +222,20 @@ class SurplusOptionsFlow(OptionsFlow):
             data_schema=self.add_suggested_values_to_schema(
                 vol.Schema(
                     {
+                        # Auch nachtraeglich aenderbar: Wer beim Einrichten
+                        # nicht wusste, dass seine Wallbox einen Mindeststrom
+                        # hat, braucht die Freigabe erst hinterher - und muesste
+                        # sonst die ganze Integration neu anlegen.
+                        vol.Optional(CONF_CURRENT_ENTITY): selector.EntitySelector(
+                            selector.EntitySelectorConfig(
+                                domain=["number", "input_number"]
+                            )
+                        ),
+                        vol.Optional(CONF_SWITCH_ENTITY): selector.EntitySelector(
+                            selector.EntitySelectorConfig(
+                                domain=["switch", "input_boolean"]
+                            )
+                        ),
                         vol.Optional(CONF_EV_POWER): _power_selector(),
                         # Nur richtig, wenn die Wallbox hinter dem Zaehler haengt
                         vol.Optional(CONF_SURPLUS_INCLUDES_EV, default=False): bool,
