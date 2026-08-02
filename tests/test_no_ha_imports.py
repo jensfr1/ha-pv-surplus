@@ -61,7 +61,10 @@ def test_der_regelkern_nimmt_die_zeit_nicht_selbst() -> None:
                 for a in knoten.names:
                     if a.name.split(".")[0] in ("time", "datetime", "random"):
                         treffer.append(f"{pfad.name}:{knoten.lineno} -> {a.name}")
-            elif isinstance(knoten, ast.ImportFrom) and knoten.module:
-                if knoten.module.split(".")[0] in ("time", "datetime", "random"):
-                    treffer.append(f"{pfad.name}:{knoten.lineno} -> {knoten.module}")
+            elif (
+                isinstance(knoten, ast.ImportFrom)
+                and knoten.module
+                and knoten.module.split(".")[0] in ("time", "datetime", "random")
+            ):
+                treffer.append(f"{pfad.name}:{knoten.lineno} -> {knoten.module}")
     assert not treffer, "Regelkern holt sich Zeit oder Zufall: " + ", ".join(treffer)

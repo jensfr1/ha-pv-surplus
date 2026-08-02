@@ -64,7 +64,7 @@ class Actuator:
     def reported_current(self) -> int | None:
         """Zurueckgemeldetes Limit der Stell-Entitaet."""
         wert = read_number(self._hass.states.get(self._current_entity))
-        return None if wert is None else int(round(wert))
+        return None if wert is None else round(wert)
 
     def external_change(self, now: float) -> bool:
         """Hat jemand anderes das Limit veraendert?

@@ -25,15 +25,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import conftest  # noqa: F401,E402  (legt die synthetischen Pakete an)
+import conftest  # noqa: F401  (legt die synthetischen Pakete an)
 
-from custom_components.pv_surplus.control.grid_guard import (  # noqa: E402
+from custom_components.pv_surplus.control.grid_guard import (
     GuardInput,
     apply_cap,
     empty_guard_state,
     update_guard,
 )
-from custom_components.pv_surplus.control.pv_probe import (  # noqa: E402
+from custom_components.pv_surplus.control.pv_probe import (
     ProbeInput,
     empty_probe_state,
     probe_target,

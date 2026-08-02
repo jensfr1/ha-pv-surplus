@@ -57,6 +57,7 @@ from .const import (
     MANUAL_OVERRIDE_S,
     TICK_INTERVAL_S,
 )
+from .control.grid_guard import empty_guard_state
 from .control.models import (
     ControlInputs,
     ControllerState,
@@ -65,7 +66,6 @@ from .control.models import (
     Mode,
     Status,
 )
-from .control.grid_guard import empty_guard_state
 from .control.phases import (
     CHARGING_W,
     PhaseCommand,
@@ -187,7 +187,7 @@ class SurplusCoordinator(DataUpdateCoordinator[Decision]):
         async with self._lock:
             try:
                 await self._regeln(stellen)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 _LOGGER.exception("Regeltakt fehlgeschlagen")
 
     async def _regeln(self, stellen: bool) -> None:

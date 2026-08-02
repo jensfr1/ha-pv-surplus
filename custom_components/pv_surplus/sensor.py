@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 
 from homeassistant.components.sensor import (
@@ -189,10 +190,9 @@ class SurplusEnergySensor(SurplusEntity, RestoreSensor):
         await super().async_added_to_hass()
         letzte = await self.async_get_last_sensor_data()
         if letzte is not None and letzte.native_value is not None:
-            try:
+            # Ein unlesbarer Zaehlerstand ist kein Grund, gar nicht zu starten
+            with suppress(TypeError, ValueError):
                 self._integrator.restore(float(letzte.native_value))
-            except (TypeError, ValueError):
-                pass
 
     @callback
     def _handle_coordinator_update(self) -> None:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -24,7 +26,7 @@ async def async_setup_entry(
 class ModeSelect(SurplusEntity, SelectEntity, RestoreEntity):
     """Auswahl zwischen Aus, PV, Min+PV, Manuell und Maximum."""
 
-    _attr_options = [m.value for m in Mode]
+    _attr_options: ClassVar[list[str]] = [m.value for m in Mode]
 
     def __init__(self, coordinator: SurplusCoordinator) -> None:
         super().__init__(coordinator, "mode")
@@ -33,9 +35,9 @@ class ModeSelect(SurplusEntity, SelectEntity, RestoreEntity):
         await super().async_added_to_hass()
         # Der Modus soll einen Neustart ueberleben - anders als die Zeitstempel
         # der Regelung, die bewusst verworfen werden.
-        if (letzter := await self.async_get_last_state()) is not None:
-            if letzter.state in self._attr_options:
-                self.coordinator.mode = Mode(letzter.state)
+        letzter = await self.async_get_last_state()
+        if letzter is not None and letzter.state in self._attr_options:
+            self.coordinator.mode = Mode(letzter.state)
 
     @property
     def current_option(self) -> str:

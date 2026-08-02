@@ -1,0 +1,25 @@
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+# Explizit festgelegt, damit lokal und in der CI dasselbe geprueft wird.
+# Ohne diese Liste haengen die Regeln an der zufaellig installierten
+# Ruff-Version, und der Lauf schlaegt genau dann fehl, wenn es stoert.
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # Importreihenfolge
+    "UP",   # veraltete Schreibweisen
+    "B",    # haeufige Fehlerquellen
+    "SIM",  # unnoetig umstaendliches
+    "RUF",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Die Tests legen erst die synthetischen Pakete an und importieren dann -
+# das ist der ganze Zweck von conftest, und E402 ist dort kein Fehler.
+"tests/crosscheck_ts.py" = ["E402"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
