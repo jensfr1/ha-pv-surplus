@@ -192,7 +192,7 @@ views:
         column_span: 2
         cards:
           - type: markdown
-            content: >
+            content: |
               {% set s = states('sensor.pv_ueberschussladen_status') %}
               {% if s == 'grid_limited' %}
               ### ⚠️ Netzbezugs-Sperre aktiv
@@ -262,7 +262,7 @@ views:
               # - entity: sensor.pv_ueberschussladen_probe_ceiling
               #   name: Getastete Obergrenze
           - type: markdown
-            content: >
+            content: |
               **Warum passiert gerade das, was passiert?**
 
 

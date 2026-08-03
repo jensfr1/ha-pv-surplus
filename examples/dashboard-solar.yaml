@@ -1,40 +1,56 @@
-# ─────────────────────────────────────────────────────────────────────────────
-#  Solar — beide Anlagen, jeder String einzeln
+# Solar - beide Anlagen, jeder String einzeln
 #
-#  Eigenständiges Dashboard, unabhängig vom Lade-Dashboard.
-#  Einfügen: neues Dashboard anlegen → Stift → Drei-Punkte-Menü →
-#            "Raw-Konfigurationseditor" → alles ersetzen → Speichern.
+# Eigenstaendiges Dashboard. Neues Dashboard anlegen, dann Stift ->
+# Drei-Punkte-Menue -> "Raw-Konfigurationseditor" -> alles ersetzen.
 #
-#  Zwei Anlagen, die sich nicht kennen:
-#    • EcoFlow Ocean 2 (Hausspeicher, 3 Strings)  → sensor.ocean2_*
-#    • Zendure SolarFlow 800 Pro (4 Strings)      → sensor.solarflow_800_pro_*
+# Hinweis: Home Assistant liest dieses YAML ein und schreibt es neu.
+# Kommentare gehen dabei verloren - das ist normal und schadet nichts.
 #
-#  Warum die Strings einzeln?  In der Summe verschwindet ein schwacher String
-#  zwischen den anderen. Nebeneinander fällt sofort auf, wenn einer verschattet,
-#  verschmutzt oder abgesteckt ist.
-#
-#  Die Skalen der Anzeigen sind bewusst je Anlage GLEICH, damit die Strings
-#  untereinander vergleichbar bleiben. Passe sie an deine Anlage an.
-# ─────────────────────────────────────────────────────────────────────────────
+# Ansicht "Fluss" braucht lumina-energy-card aus HACS. Fehlt sie, die
+# Ansicht loeschen; die anderen beiden laufen mit Standard-Karten.
 
 views:
 
-  # ══ ÜBERSICHT ═══════════════════════════════════════════════════════════
-  - title: Solar
-    path: solar
-    icon: mdi:solar-power-variant
+  - title: Fluss
+    path: fluss
+    icon: mdi:transit-connection-variant
+    panel: true
+    cards:
+      - type: custom:lumina-energy-card
+        installation_type: "2"
+        display_unit: kW
+        animation_style: shimmer
+        image_style: holographic
+        update_interval: 3
+        grid_activity_threshold: 50
+        sensor_pv_total: sensor.ocean2_solar_power
+        sensor_pv_total_secondary: sensor.solarflow_800_pro_solar_input_power
+        sensor_bat1_soc: sensor.ocean2_battery
+        sensor_bat1_power: sensor.ocean2_battery_power
+        sensor_home_load: sensor.ocean2_house_consumption
+        sensor_grid_power: sensor.ocean2_grid_power
+        sensor_car1_power: sensor.daheimlader_ladeleistung
+        show_car_soc: false
+        show_car2: false
+        show_pv_strings: true
+        pv_string1_color: "#ffd54f"
+        pv_string2_color: "#ffb300"
+        pv_string3_color: "#ff8f00"
+
+  - title: Strings
+    path: strings
+    icon: mdi:solar-panel-large
     type: sections
-    max_columns: 2
+    max_columns: 3
     sections:
 
       - type: grid
-        column_span: 2
+        column_span: 3
         cards:
           - type: heading
-            heading: Beide Anlagen
+            heading: Erzeugung gerade
             heading_style: title
             icon: mdi:solar-power
-
           - type: grid
             columns: 4
             square: false
@@ -48,31 +64,19 @@ views:
                 name: Zendure
                 color: green
               - type: tile
+                entity: sensor.ocean2_house_consumption
+                name: Haus
+                color: blue
+              - type: tile
                 entity: sensor.ocean2_grid_power
                 name: Netz
-              - type: tile
-                entity: sensor.ocean2_house_consumption
-                name: Hausverbrauch
-                color: blue
 
-          - type: history-graph
-            hours_to_show: 24
-            title: Erzeugung im Tagesverlauf
-            entities:
-              - entity: sensor.ocean2_solar_power
-                name: Ocean 2
-              - entity: sensor.solarflow_800_pro_solar_input_power
-                name: Zendure
-
-      # ── Ocean 2 ───────────────────────────────────────────────────────
       - type: grid
+        column_span: 2
         cards:
           - type: heading
-            heading: Ocean 2 — Strings
+            heading: Ocean 2
             icon: mdi:solar-panel-large
-
-          # Gleiche Skala für alle drei: nur so sind sie vergleichbar.
-          # Bei einer anderen Anlage das Maximum anpassen.
           - type: grid
             columns: 3
             square: false
@@ -83,22 +87,30 @@ views:
                 min: 0
                 max: 4500
                 needle: true
-                severity: {green: 1500, yellow: 400, red: 0}
+                severity:
+                  green: 1500
+                  yellow: 400
+                  red: 0
               - type: gauge
                 entity: sensor.ocean2_string_2_power
                 name: String 2
                 min: 0
                 max: 4500
                 needle: true
-                severity: {green: 1500, yellow: 400, red: 0}
+                severity:
+                  green: 1500
+                  yellow: 400
+                  red: 0
               - type: gauge
                 entity: sensor.ocean2_string_3_power
                 name: String 3
                 min: 0
                 max: 4500
                 needle: true
-                severity: {green: 1500, yellow: 400, red: 0}
-
+                severity:
+                  green: 1500
+                  yellow: 400
+                  red: 0
           - type: history-graph
             hours_to_show: 24
             entities:
@@ -109,28 +121,44 @@ views:
               - entity: sensor.ocean2_string_3_power
                 name: String 3
 
-          - type: entities
-            title: Anlage
-            entities:
-              - entity: sensor.ocean2_solar_power
-                name: Erzeugung gerade
-              - entity: sensor.ocean2_solar_production
-                name: Erzeugung gesamt
-              - type: divider
-              - entity: sensor.ocean2_battery
-                name: Speicher
-              - entity: sensor.ocean2_battery_power
-                name: Batterieleistung
-              - entity: sensor.ocean2_battery_remaining_energy
-                name: Verbleibend
-
-      # ── Zendure ───────────────────────────────────────────────────────
       - type: grid
         cards:
           - type: heading
-            heading: Zendure — Strings
-            icon: mdi:solar-panel
+            heading: Speicher
+            icon: mdi:battery
+          - type: gauge
+            entity: sensor.ocean2_battery
+            name: Ocean 2
+            min: 0
+            max: 100
+            needle: true
+            severity:
+              green: 50
+              yellow: 20
+              red: 0
+          - type: gauge
+            entity: sensor.solarflow_800_pro_electric_level
+            name: Zendure
+            min: 0
+            max: 100
+            needle: true
+            severity:
+              green: 50
+              yellow: 20
+              red: 0
+          - type: entities
+            entities:
+              - entity: sensor.ocean2_battery_remaining_energy
+                name: Ocean 2 verbleibend
+              - entity: sensor.solarflow_800_pro_available_kwh
+                name: Zendure verbleibend
 
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Zendure
+            icon: mdi:solar-panel
           - type: grid
             columns: 4
             square: false
@@ -141,29 +169,40 @@ views:
                 min: 0
                 max: 500
                 needle: true
-                severity: {green: 250, yellow: 80, red: 0}
+                severity:
+                  green: 250
+                  yellow: 80
+                  red: 0
               - type: gauge
                 entity: sensor.solarflow_800_pro_solar_power2
                 name: PV 2
                 min: 0
                 max: 500
                 needle: true
-                severity: {green: 250, yellow: 80, red: 0}
+                severity:
+                  green: 250
+                  yellow: 80
+                  red: 0
               - type: gauge
                 entity: sensor.solarflow_800_pro_solar_power3
                 name: PV 3
                 min: 0
                 max: 500
                 needle: true
-                severity: {green: 250, yellow: 80, red: 0}
+                severity:
+                  green: 250
+                  yellow: 80
+                  red: 0
               - type: gauge
                 entity: sensor.solarflow_800_pro_solar_power4
                 name: PV 4
                 min: 0
                 max: 500
                 needle: true
-                severity: {green: 250, yellow: 80, red: 0}
-
+                severity:
+                  green: 250
+                  yellow: 80
+                  red: 0
           - type: history-graph
             hours_to_show: 24
             entities:
@@ -176,27 +215,9 @@ views:
               - entity: sensor.solarflow_800_pro_solar_power4
                 name: PV 4
 
-          - type: entities
-            title: Anlage
-            entities:
-              - entity: sensor.solarflow_800_pro_solar_input_power
-                name: Erzeugung gerade
-              - entity: sensor.solarflow_800_pro_aggr_solar
-                name: Erzeugung gesamt
-              - type: divider
-              - entity: sensor.solarflow_800_pro_electric_level
-                name: Speicher
-              - entity: sensor.solarflow_800_pro_available_kwh
-                name: Verfügbar
-              - entity: sensor.solarflow_800_pro_output_home_power
-                name: Abgabe ans Haus
-              - entity: sensor.solarflow_800_pro_bat_in_out
-                name: Batterieleistung
-
-  # ══ VERGLEICH ═══════════════════════════════════════════════════════════
-  - title: Vergleich
-    path: vergleich
-    icon: mdi:compare-horizontal
+  - title: Zahlen
+    path: zahlen
+    icon: mdi:table
     type: sections
     max_columns: 2
     sections:
@@ -205,51 +226,34 @@ views:
         column_span: 2
         cards:
           - type: heading
-            heading: Wer liefert was?
+            heading: Wer liefert was
             heading_style: title
             icon: mdi:scale-balance
-
           - type: markdown
-            content: >
+            content: |
               {% set o1 = states('sensor.ocean2_string_1_power') | float(0) %}
               {% set o2 = states('sensor.ocean2_string_2_power') | float(0) %}
               {% set o3 = states('sensor.ocean2_string_3_power') | float(0) %}
               {% set z = states('sensor.solarflow_800_pro_solar_input_power') | float(0) %}
-              {% set ocean = o1 + o2 + o3 %}
-              {% set gesamt = ocean + z %}
-
+              {% set gesamt = o1 + o2 + o3 + z %}
               ## {{ gesamt | round }} W insgesamt
 
               | Quelle | Leistung | Anteil |
               |---|---:|---:|
-              | Ocean 2 String 1 | {{ o1 | round }} W | {{ (o1 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
-              | Ocean 2 String 2 | {{ o2 | round }} W | {{ (o2 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
-              | Ocean 2 String 3 | {{ o3 | round }} W | {{ (o3 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+              | Ocean 2 · String 1 | {{ o1 | round }} W | {{ (o1 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+              | Ocean 2 · String 2 | {{ o2 | round }} W | {{ (o2 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+              | Ocean 2 · String 3 | {{ o3 | round }} W | {{ (o3 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
               | Zendure gesamt | {{ z | round }} W | {{ (z / gesamt * 100) | round if gesamt > 0 else 0 }} % |
 
-
-              {% if gesamt > 500 %}
-              {% set werte = [o1, o2, o3] %}
-              {% set aktiv = werte | select('gt', 50) | list %}
-              {% if aktiv | length > 1 and (aktiv | max) > 0 %}
-              {% set schwach = (aktiv | min) / (aktiv | max) %}
-              {% if schwach < 0.5 %}
-              > ⚠️ Der schwächste aktive Ocean-String liefert nur
-              > {{ (schwach * 100) | round }} % des stärksten. Bei gleich großen
-              > Teilanlagen wäre das ein Hinweis auf Verschattung oder
-              > Verschmutzung — bei unterschiedlich großen ist es normal.
-              {% endif %}
-              {% endif %}
-              {% if o3 < 10 and (o1 + o2) > 500 %}
-              > ℹ️ String 3 liefert nichts, während die anderen arbeiten.
-              > Entweder ist dort nichts angeschlossen, oder er ist ausgefallen.
-              {% endif %}
+              {% if gesamt > 500 and o3 < 10 and (o1 + o2) > 500 %}
+              > String 3 liefert nichts, waehrend die anderen arbeiten.
+              > Entweder haengt dort nichts, oder er ist ausgefallen.
               {% endif %}
 
       - type: grid
         cards:
           - type: heading
-            heading: Erträge gesamt
+            heading: Ertrag
             icon: mdi:counter
           - type: grid
             columns: 2
@@ -263,57 +267,41 @@ views:
                 entity: sensor.solarflow_800_pro_aggr_solar
                 name: Zendure
                 color: green
-          - type: statistic
-            entity: sensor.ocean2_solar_production
-            period:
-              calendar:
-                period: month
-            stat_type: change
-            name: Ocean 2 diesen Monat
-          - type: statistic
-            entity: sensor.solarflow_800_pro_aggr_solar
-            period:
-              calendar:
-                period: month
-            stat_type: change
-            name: Zendure diesen Monat
+          - type: history-graph
+            hours_to_show: 168
+            title: Sieben Tage
+            entities:
+              - entity: sensor.ocean2_solar_power
+                name: Ocean 2
+              - entity: sensor.solarflow_800_pro_solar_input_power
+                name: Zendure
 
       - type: grid
         cards:
           - type: heading
-            heading: Speicher im Vergleich
-            icon: mdi:battery-charging
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-              - type: gauge
-                entity: sensor.ocean2_battery
-                name: Ocean 2
-                min: 0
-                max: 100
-                needle: true
-                severity: {green: 50, yellow: 20, red: 0}
-              - type: gauge
-                entity: sensor.solarflow_800_pro_electric_level
-                name: Zendure
-                min: 0
-                max: 100
-                needle: true
-                severity: {green: 50, yellow: 20, red: 0}
-          - type: history-graph
-            hours_to_show: 24
+            heading: Zendure im Detail
+            icon: mdi:information-outline
+          - type: entities
             entities:
-              - entity: sensor.ocean2_battery
-                name: Ocean 2
-              - entity: sensor.solarflow_800_pro_electric_level
-                name: Zendure
+              - entity: sensor.solarflow_800_pro_output_home_power
+                name: Abgabe ans Haus
+              - entity: sensor.solarflow_800_pro_bat_in_out
+                name: Batterieleistung
+              - entity: sensor.solarflow_800_pro_aggr_charge
+                name: Gesamt geladen
+              - entity: sensor.solarflow_800_pro_aggr_discharge
+                name: Gesamt entladen
+          - type: markdown
+            content: |
+              {% set c = states('sensor.solarflow_800_pro_aggr_charge') | float(0) %}
+              {% set d = states('sensor.solarflow_800_pro_aggr_discharge') | float(0) %}
+              {% if c > 0 %}
+              **Wirkungsgrad im Umlauf: {{ (d / c * 100) | round(1) }} %**
 
-# ─────────────────────────────────────────────────────────────────────────────
-#  Nicht verwendet, mit Absicht:
-#
-#  sensor.solarflow_800_pro_pv_erzeugung  —  Dieser Sensor ist nicht
-#  nachvollziehbar. Er stand nachts bei 22.392 "W", während alle echten
-#  PV-Sensoren 0 meldeten, und passt auch tagsüber zu keiner Summe. Als
-#  Leistung wäre er bei 800 W Anlagenleistung ohnehin unmöglich.
-# ─────────────────────────────────────────────────────────────────────────────
+              Von {{ c | round }} kWh, die in den Speicher gingen, kamen
+              {{ d | round }} kWh wieder heraus. Die Differenz von
+              {{ (c - d) | round }} kWh ist Verlust.
+
+              Deshalb lohnt es sich, Strom direkt zu verbrauchen, statt ihn
+              erst zwischenzuspeichern.
+              {% endif %}
