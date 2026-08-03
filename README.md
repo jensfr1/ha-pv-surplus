@@ -153,10 +153,18 @@ der nur dann etwas anzeigt, wenn tatsächlich eingegriffen wird — Netzsperre
 aktiv, Tast-Betrieb läuft, Zähler ausgefallen. Ein Dashboard, das ständig
 Warnungen zeigt, wird nach einer Woche nicht mehr gelesen.
 
-Nur Standard-Karten, keine Frontend-Erweiterungen nötig. Einfügen über
-*Dashboard → Stift → Drei-Punkte-Menü → Raw-Konfigurationseditor*. Die
-Entitäts-IDs darin nehmen an, dass dein Gerät „PV-Überschussladen" heißt —
-heißt es anders, einmal Suchen und Ersetzen.
+Dazu [`examples/dashboard-solar.yaml`](examples/dashboard-solar.yaml) für
+Anlagen mit mehreren Wechselrichtern — jeder String einzeln, weil ein
+schwacher in der Summe zwischen den anderen verschwindet.
+
+Einfügen über *Dashboard → Stift → Drei-Punkte-Menü →
+Raw-Konfigurationseditor*. Die Entitäts-IDs darin nehmen an, dass dein Gerät
+„PV-Überschussladen" heißt — heißt es anders, einmal Suchen und Ersetzen.
+
+**Voraussetzungen aus HACS:** `mushroom`, `mini-graph-card`,
+`multiple-entity-row`, `slider-entity-row`, dazu wahlweise
+`power-flow-card-plus` oder `lumina-energy-card`. Fehlt eine davon, bleibt
+nur die betroffene Karte leer — der Rest funktioniert.
 
 ## Woher die Regelung kommt
 

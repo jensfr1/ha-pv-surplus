@@ -1,16 +1,16 @@
 # Solar - beide Anlagen, jeder String einzeln
 #
-# Eigenstaendiges Dashboard. Neues Dashboard anlegen, dann Stift ->
-# Drei-Punkte-Menue -> "Raw-Konfigurationseditor" -> alles ersetzen.
+# Diese Fassung nutzt HACS-Karten fuer die Darstellung:
+#   mushroom, mini-graph-card, multiple-entity-row, lumina-energy-card
+# Fehlt eine davon, bleibt die betroffene Karte leer - dann entweder
+# nachinstallieren oder die Karte loeschen.
 #
-# Hinweis: Home Assistant liest dieses YAML ein und schreibt es neu.
-# Kommentare gehen dabei verloren - das ist normal und schadet nichts.
-#
-# Ansicht "Fluss" braucht lumina-energy-card aus HACS. Fehlt sie, die
-# Ansicht loeschen; die anderen beiden laufen mit Standard-Karten.
+# Hinweis: Home Assistant schreibt das YAML beim Speichern neu, Kommentare
+# gehen dabei verloren. Das ist normal.
 
 views:
 
+  # ── Vollbild-Energiefluss ────────────────────────────────────────────
   - title: Fluss
     path: fluss
     icon: mdi:transit-connection-variant
@@ -33,275 +33,217 @@ views:
         show_car_soc: false
         show_car2: false
         show_pv_strings: true
-        pv_string1_color: "#ffd54f"
-        pv_string2_color: "#ffb300"
-        pv_string3_color: "#ff8f00"
 
+  # ── Strings nebeneinander ────────────────────────────────────────────
   - title: Strings
     path: strings
     icon: mdi:solar-panel-large
-    type: sections
-    max_columns: 3
-    sections:
+    cards:
 
-      - type: grid
-        column_span: 3
-        cards:
-          - type: heading
-            heading: Erzeugung gerade
-            heading_style: title
+      - type: custom:mushroom-chips-card
+        alignment: center
+        chips:
+          - type: entity
+            entity: sensor.ocean2_solar_power
             icon: mdi:solar-power
-          - type: grid
-            columns: 4
-            square: false
-            cards:
-              - type: tile
-                entity: sensor.ocean2_solar_power
-                name: Ocean 2
-                color: amber
-              - type: tile
-                entity: sensor.solarflow_800_pro_solar_input_power
-                name: Zendure
-                color: green
-              - type: tile
-                entity: sensor.ocean2_house_consumption
-                name: Haus
-                color: blue
-              - type: tile
-                entity: sensor.ocean2_grid_power
-                name: Netz
+            icon_color: amber
+          - type: entity
+            entity: sensor.solarflow_800_pro_solar_input_power
+            icon: mdi:solar-panel
+            icon_color: green
+          - type: entity
+            entity: sensor.ocean2_house_consumption
+            icon: mdi:home-lightning-bolt
+            icon_color: blue
+          - type: entity
+            entity: sensor.ocean2_grid_power
+            icon: mdi:transmission-tower
+            icon_color: red
+          - type: entity
+            entity: sensor.ocean2_battery
+            icon: mdi:battery
+            icon_color: teal
 
-      - type: grid
-        column_span: 2
-        cards:
-          - type: heading
-            heading: Ocean 2
-            icon: mdi:solar-panel-large
-          - type: grid
-            columns: 3
-            square: false
-            cards:
-              - type: gauge
-                entity: sensor.ocean2_string_1_power
-                name: String 1
-                min: 0
-                max: 4500
-                needle: true
-                severity:
-                  green: 1500
-                  yellow: 400
-                  red: 0
-              - type: gauge
-                entity: sensor.ocean2_string_2_power
-                name: String 2
-                min: 0
-                max: 4500
-                needle: true
-                severity:
-                  green: 1500
-                  yellow: 400
-                  red: 0
-              - type: gauge
-                entity: sensor.ocean2_string_3_power
-                name: String 3
-                min: 0
-                max: 4500
-                needle: true
-                severity:
-                  green: 1500
-                  yellow: 400
-                  red: 0
-          - type: history-graph
-            hours_to_show: 24
+      # Ocean 2 ---------------------------------------------------------
+      - type: custom:mini-graph-card
+        name: Ocean 2 — Strings
+        icon: mdi:solar-panel-large
+        hours_to_show: 24
+        points_per_hour: 12
+        line_width: 2
+        animate: true
+        show:
+          fill: fade
+          legend: true
+          extrema: true
+          average: true
+        entities:
+          - entity: sensor.ocean2_string_1_power
+            name: String 1
+            color: "#ffb300"
+          - entity: sensor.ocean2_string_2_power
+            name: String 2
+            color: "#fb8c00"
+          - entity: sensor.ocean2_string_3_power
+            name: String 3
+            color: "#e65100"
+
+      - type: entities
+        title: Ocean 2 im Detail
+        entities:
+          # Alle drei Strings in einer Zeile - so sieht man den Vergleich,
+          # ohne die Augen wandern zu lassen.
+          - type: custom:multiple-entity-row
+            entity: sensor.ocean2_solar_power
+            name: Strings
+            show_state: false
             entities:
               - entity: sensor.ocean2_string_1_power
-                name: String 1
+                name: "1"
               - entity: sensor.ocean2_string_2_power
-                name: String 2
+                name: "2"
               - entity: sensor.ocean2_string_3_power
-                name: String 3
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Speicher
-            icon: mdi:battery
-          - type: gauge
+                name: "3"
+          - type: custom:multiple-entity-row
             entity: sensor.ocean2_battery
-            name: Ocean 2
-            min: 0
-            max: 100
-            needle: true
-            severity:
-              green: 50
-              yellow: 20
-              red: 0
-          - type: gauge
-            entity: sensor.solarflow_800_pro_electric_level
-            name: Zendure
-            min: 0
-            max: 100
-            needle: true
-            severity:
-              green: 50
-              yellow: 20
-              red: 0
-          - type: entities
+            name: Speicher
+            secondary_info: last-changed
             entities:
+              - entity: sensor.ocean2_battery_power
+                name: Leistung
               - entity: sensor.ocean2_battery_remaining_energy
-                name: Ocean 2 verbleibend
-              - entity: sensor.solarflow_800_pro_available_kwh
-                name: Zendure verbleibend
+                name: Rest
+          - entity: sensor.ocean2_solar_production
+            name: Ertrag gesamt
 
-      - type: grid
-        column_span: 3
-        cards:
-          - type: heading
-            heading: Zendure
-            icon: mdi:solar-panel
-          - type: grid
-            columns: 4
-            square: false
-            cards:
-              - type: gauge
-                entity: sensor.solarflow_800_pro_solar_power1
-                name: PV 1
-                min: 0
-                max: 500
-                needle: true
-                severity:
-                  green: 250
-                  yellow: 80
-                  red: 0
-              - type: gauge
-                entity: sensor.solarflow_800_pro_solar_power2
-                name: PV 2
-                min: 0
-                max: 500
-                needle: true
-                severity:
-                  green: 250
-                  yellow: 80
-                  red: 0
-              - type: gauge
-                entity: sensor.solarflow_800_pro_solar_power3
-                name: PV 3
-                min: 0
-                max: 500
-                needle: true
-                severity:
-                  green: 250
-                  yellow: 80
-                  red: 0
-              - type: gauge
-                entity: sensor.solarflow_800_pro_solar_power4
-                name: PV 4
-                min: 0
-                max: 500
-                needle: true
-                severity:
-                  green: 250
-                  yellow: 80
-                  red: 0
-          - type: history-graph
-            hours_to_show: 24
+      # Zendure ---------------------------------------------------------
+      - type: custom:mini-graph-card
+        name: Zendure — Strings
+        icon: mdi:solar-panel
+        hours_to_show: 24
+        points_per_hour: 12
+        line_width: 2
+        animate: true
+        show:
+          fill: fade
+          legend: true
+          extrema: true
+          average: true
+        entities:
+          - entity: sensor.solarflow_800_pro_solar_power1
+            name: PV 1
+            color: "#66bb6a"
+          - entity: sensor.solarflow_800_pro_solar_power2
+            name: PV 2
+            color: "#43a047"
+          - entity: sensor.solarflow_800_pro_solar_power3
+            name: PV 3
+            color: "#2e7d32"
+          - entity: sensor.solarflow_800_pro_solar_power4
+            name: PV 4
+            color: "#1b5e20"
+
+      - type: entities
+        title: Zendure im Detail
+        entities:
+          - type: custom:multiple-entity-row
+            entity: sensor.solarflow_800_pro_solar_input_power
+            name: Strings
+            show_state: false
             entities:
               - entity: sensor.solarflow_800_pro_solar_power1
-                name: PV 1
+                name: "1"
               - entity: sensor.solarflow_800_pro_solar_power2
-                name: PV 2
+                name: "2"
               - entity: sensor.solarflow_800_pro_solar_power3
-                name: PV 3
+                name: "3"
               - entity: sensor.solarflow_800_pro_solar_power4
-                name: PV 4
+                name: "4"
+          - type: custom:multiple-entity-row
+            entity: sensor.solarflow_800_pro_electric_level
+            name: Speicher
+            entities:
+              - entity: sensor.solarflow_800_pro_bat_in_out
+                name: Leistung
+              - entity: sensor.solarflow_800_pro_available_kwh
+                name: Rest
+          - entity: sensor.solarflow_800_pro_output_home_power
+            name: Abgabe ans Haus
+          - entity: sensor.solarflow_800_pro_aggr_solar
+            name: Ertrag gesamt
 
+  # ── Zahlen und Auffälligkeiten ───────────────────────────────────────
   - title: Zahlen
     path: zahlen
     icon: mdi:table
-    type: sections
-    max_columns: 2
-    sections:
+    cards:
 
-      - type: grid
-        column_span: 2
-        cards:
-          - type: heading
-            heading: Wer liefert was
-            heading_style: title
-            icon: mdi:scale-balance
-          - type: markdown
-            content: |
-              {% set o1 = states('sensor.ocean2_string_1_power') | float(0) %}
-              {% set o2 = states('sensor.ocean2_string_2_power') | float(0) %}
-              {% set o3 = states('sensor.ocean2_string_3_power') | float(0) %}
-              {% set z = states('sensor.solarflow_800_pro_solar_input_power') | float(0) %}
-              {% set gesamt = o1 + o2 + o3 + z %}
-              ## {{ gesamt | round }} W insgesamt
+      - type: markdown
+        content: |
+          {% set o1 = states('sensor.ocean2_string_1_power') | float(0) %}
+          {% set o2 = states('sensor.ocean2_string_2_power') | float(0) %}
+          {% set o3 = states('sensor.ocean2_string_3_power') | float(0) %}
+          {% set z = states('sensor.solarflow_800_pro_solar_input_power') | float(0) %}
+          {% set gesamt = o1 + o2 + o3 + z %}
+          ## {{ gesamt | round }} W insgesamt
 
-              | Quelle | Leistung | Anteil |
-              |---|---:|---:|
-              | Ocean 2 · String 1 | {{ o1 | round }} W | {{ (o1 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
-              | Ocean 2 · String 2 | {{ o2 | round }} W | {{ (o2 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
-              | Ocean 2 · String 3 | {{ o3 | round }} W | {{ (o3 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
-              | Zendure gesamt | {{ z | round }} W | {{ (z / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+          | Quelle | Leistung | Anteil |
+          |---|---:|---:|
+          | Ocean 2 · String 1 | {{ o1 | round }} W | {{ (o1 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+          | Ocean 2 · String 2 | {{ o2 | round }} W | {{ (o2 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+          | Ocean 2 · String 3 | {{ o3 | round }} W | {{ (o3 / gesamt * 100) | round if gesamt > 0 else 0 }} % |
+          | Zendure gesamt | {{ z | round }} W | {{ (z / gesamt * 100) | round if gesamt > 0 else 0 }} % |
 
-              {% if gesamt > 500 and o3 < 10 and (o1 + o2) > 500 %}
-              > String 3 liefert nichts, waehrend die anderen arbeiten.
-              > Entweder haengt dort nichts, oder er ist ausgefallen.
-              {% endif %}
+          {% if gesamt > 500 and o3 < 10 and (o1 + o2) > 500 %}
+          > **String 3 liefert nichts**, während die anderen arbeiten.
+          > Entweder hängt dort nichts, oder er ist ausgefallen.
+          {% endif %}
 
-      - type: grid
-        cards:
-          - type: heading
-            heading: Ertrag
-            icon: mdi:counter
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-              - type: tile
-                entity: sensor.ocean2_solar_production
-                name: Ocean 2
-                color: amber
-              - type: tile
-                entity: sensor.solarflow_800_pro_aggr_solar
-                name: Zendure
-                color: green
-          - type: history-graph
-            hours_to_show: 168
-            title: Sieben Tage
-            entities:
-              - entity: sensor.ocean2_solar_power
-                name: Ocean 2
-              - entity: sensor.solarflow_800_pro_solar_input_power
-                name: Zendure
+      - type: custom:mini-graph-card
+        name: Beide Anlagen über sieben Tage
+        hours_to_show: 168
+        points_per_hour: 1
+        line_width: 2
+        show:
+          fill: fade
+          legend: true
+          extrema: true
+        entities:
+          - entity: sensor.ocean2_solar_power
+            name: Ocean 2
+            color: "#ffb300"
+          - entity: sensor.solarflow_800_pro_solar_input_power
+            name: Zendure
+            color: "#43a047"
 
-      - type: grid
-        cards:
-          - type: heading
-            heading: Zendure im Detail
-            icon: mdi:information-outline
-          - type: entities
-            entities:
-              - entity: sensor.solarflow_800_pro_output_home_power
-                name: Abgabe ans Haus
-              - entity: sensor.solarflow_800_pro_bat_in_out
-                name: Batterieleistung
-              - entity: sensor.solarflow_800_pro_aggr_charge
-                name: Gesamt geladen
-              - entity: sensor.solarflow_800_pro_aggr_discharge
-                name: Gesamt entladen
-          - type: markdown
-            content: |
-              {% set c = states('sensor.solarflow_800_pro_aggr_charge') | float(0) %}
-              {% set d = states('sensor.solarflow_800_pro_aggr_discharge') | float(0) %}
-              {% if c > 0 %}
-              **Wirkungsgrad im Umlauf: {{ (d / c * 100) | round(1) }} %**
+      - type: custom:mini-graph-card
+        name: Speicherstand
+        hours_to_show: 48
+        points_per_hour: 4
+        line_width: 3
+        show:
+          fill: fade
+          legend: true
+        entities:
+          - entity: sensor.ocean2_battery
+            name: Ocean 2
+            color: "#26a69a"
+          - entity: sensor.solarflow_800_pro_electric_level
+            name: Zendure
+            color: "#5e35b1"
 
-              Von {{ c | round }} kWh, die in den Speicher gingen, kamen
-              {{ d | round }} kWh wieder heraus. Die Differenz von
-              {{ (c - d) | round }} kWh ist Verlust.
+      - type: markdown
+        content: |
+          {% set c = states('sensor.solarflow_800_pro_aggr_charge') | float(0) %}
+          {% set d = states('sensor.solarflow_800_pro_aggr_discharge') | float(0) %}
+          {% if c > 0 %}
+          ### Wirkungsgrad im Umlauf: {{ (d / c * 100) | round(1) }} %
 
-              Deshalb lohnt es sich, Strom direkt zu verbrauchen, statt ihn
-              erst zwischenzuspeichern.
-              {% endif %}
+          Von {{ c | round }} kWh, die in den Zendure-Speicher gingen, kamen
+          {{ d | round }} kWh wieder heraus — **{{ (c - d) | round }} kWh
+          Verlust**.
+
+          Deshalb lohnt es sich, Strom direkt zu verbrauchen, statt ihn erst
+          zwischenzuspeichern. Genau das macht die Überschussregelung beim
+          Auto.
+          {% endif %}
