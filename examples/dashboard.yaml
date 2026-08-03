@@ -239,16 +239,23 @@ views:
             entity: sensor.ocean2_solar_power
             name: Solar
           battery:
-            entity: sensor.ocean2_battery
-            name: Speicher
+            # entity ist die LEISTUNG, state_of_charge der Ladestand.
+            # Wer hier den Ladestand einsetzt, verrechnet Prozent mit Watt.
+            entity: sensor.ocean2_battery_power
             state_of_charge: sensor.ocean2_battery
+            name: Speicher
+            # Ocean 2 meldet Laden positiv, die Karte erwartet es negativ
+            invert_state: true
           grid:
             entity: sensor.ocean2_grid_power
             name: Netz
-            invert_state: false
           home:
             entity: sensor.ocean2_house_consumption
             name: Haus
+            # Ohne das rechnet die Karte die Hauslast selbst aus Solar,
+            # Netz und Batterie zusammen. Das Geraet MISST sie aber - und
+            # gemessen schlaegt gerechnet.
+            override_state: true
           individual:
             - entity: sensor.daheimlader_ladeleistung
               name: Auto
