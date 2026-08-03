@@ -49,13 +49,17 @@ Last dazuschaltet. Genau das macht der Tast-Betrieb.
 
 ## Betriebsarten
 
-| Modus | Verhalten |
-|---|---|
-| **Aus** | Kein Eingriff. Auch die Netzsperre ruht — das ist die Zusage dieses Modus. |
-| **Nur Solarstrom** | Lädt ausschließlich mit Überschuss. Kein Netzbezug. |
-| **Min + Solarstrom** | Wie oben, lädt aber notfalls aus dem Netz, solange das Auto unter dem Mindest-Ladestand liegt. |
-| **Manuell** | Fester Ladestrom, unabhängig vom Überschuss. |
-| **Maximum** | Volle Leistung. |
+| Modus | Verhalten | Netzstrom möglich? |
+|---|---|---|
+| **Aus** | Kein Eingriff. Auch die Netzsperre ruht — das ist die Zusage dieses Modus. | nein |
+| **Nur Solarstrom** | Lädt ausschließlich mit Überschuss. | **nein** |
+| **Min + Solarstrom** | Wie oben, lädt aber notfalls aus dem Netz, solange das Auto unter dem Mindest-Ladestand liegt. | ja, mit Mindeststrom |
+| **Manuell** | Fester Ladestrom, unabhängig vom Überschuss. | ja |
+| **Maximum** | Volle Leistung. | ja |
+
+Ausführlich mit allen Schwellwerten und Zeiten:
+**[BETRIEBSARTEN.md](BETRIEBSARTEN.md)** — dort steht auch, wann der
+Tast-Betrieb etwas bringt und wann er nur Unruhe stiftet.
 
 ## Installation
 
